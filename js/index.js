@@ -19,6 +19,28 @@ form.addEventListener("submit", (event) => {
       data.items.forEach((user) => {
         const userCard = createUserCard(user);
         userList.appendChild(userCard);
+
+        // get repositories for the current user and add a button for each repository
+        fetch(user.repos_url)
+          .then((response) => response.json())
+          .then((data) => {
+            const repoList = document.createElement("ul");
+            repoList.className = "repo-list";
+            userCard.appendChild(repoList);
+
+            data.forEach((repo) => {
+              const repoItem = document.createElement("li");
+              repoItem.className = "repo-item";
+              const repoBtn = document.createElement("button");
+              repoBtn.textContent = repo.name;
+              repoBtn.addEventListener("click", () => {
+                window.open(repo.html_url);
+              });
+              repoItem.appendChild(repoBtn);
+              repoList.appendChild(repoItem);
+            });
+          })
+          .catch((error) => console.error(error));
       });
     })
     .catch((error) => console.error(error));
@@ -35,3 +57,4 @@ function createUserCard(user) {
   `;
   return card;
 }
+
